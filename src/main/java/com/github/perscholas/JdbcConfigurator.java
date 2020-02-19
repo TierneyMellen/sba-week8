@@ -12,12 +12,16 @@ import java.sql.SQLException;
 public class JdbcConfigurator {
     public static void initialize() {
         registerJdbcDriver();
-        createDatabase();
-        useDatabase();
-        createStudentTable();
-        createCourseTable();
-        executeSqlFile("students.populate-table.sql");
-        executeSqlFile("courses.populate-table.sql");
+        DatabaseConnection dbc = DatabaseConnection.MARIADB;
+        dbc.executeStatement("CREATE DATABASE IF NOT EXISTS managementSystem;");
+        dbc.executeStatement("USE managementSystem;");
+
+        createTable("courses.create-table.sql");
+        createTable("students.create-table.sql");
+        createTable("registration.create-table.sql");
+
+        populateTable("students.populate-table.sql");
+        populateTable("courses.populate-table.sql");
     }
 
     private static void registerJdbcDriver() {
@@ -28,29 +32,13 @@ public class JdbcConfigurator {
             throw new Error(e1);
         }
     }
-
-    private static void createDatabase() {
-        DatabaseConnection.MARIADB.executeStatement("CREATE OR REPLACE DATABASE managementSystem;");
-    }
-
-    private static void useDatabase() {
-        DatabaseConnection.MARIADB.executeStatement("USE managementSystem;");
-    }
-
-    private static void createStudentTable() {
-        File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory("students.create-table.sql");
+    private static void createTable(String fileName) {
+        File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory(fileName);
         FileReader fileReader = new FileReader(creationStatementFile.getAbsolutePath());
         DatabaseConnection.MARIADB.executeStatement(fileReader.toString());
     }
 
-    private static void createCourseTable() {
-        File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory("courses.create-table.sql");
-        FileReader fileReader = new FileReader(creationStatementFile.getAbsolutePath());
-        DatabaseConnection.MARIADB.executeStatement(fileReader.toString());
-    }
-
-
-    private static void executeSqlFile(String fileName) {
+    private static void populateTable(String fileName) {
         File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory(fileName);
         FileReader fileReader = new FileReader(creationStatementFile.getAbsolutePath());
         String fileContent = fileReader.toString();
