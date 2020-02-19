@@ -16,7 +16,7 @@ public class SchoolManagementSystem implements Runnable {
         String smsDashboardInput = getSchoolManagementSystemDashboardInput();
         if ("login".equals(smsDashboardInput)) {
 
-            StudentDao studentService = new StudentService(DatabaseConnection.MYSQL); // TODO - get literal value
+            StudentDao studentService = new StudentService(DatabaseConnection.MARIADB); // TODO - get literal value
 
             String studentEmail = console.getStringInput("Enter your email:");
             String studentPassword = console.getStringInput("Enter your password:");

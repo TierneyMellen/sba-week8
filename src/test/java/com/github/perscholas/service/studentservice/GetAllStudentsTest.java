@@ -1,5 +1,6 @@
 package com.github.perscholas.service.studentservice;
 
+import com.github.perscholas.DatabaseConnection;
 import com.github.perscholas.JdbcConfigurator;
 import com.github.perscholas.dao.StudentDao;
 import com.github.perscholas.model.StudentInterface;
@@ -34,7 +35,7 @@ public class GetAllStudentsTest {
     // TODO - Add `@Test` annotation
     public void test() {
         JdbcConfigurator.initialize();
-        StudentDao service = (StudentDao) new StudentService();
+        StudentDao service = new StudentService(DatabaseConnection.MARIADB);
 
         // when
         List<StudentInterface> studentList = service.getAllStudents();

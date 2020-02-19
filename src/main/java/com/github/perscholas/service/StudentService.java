@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 // TODO - Implement respective DAO interface
 public class StudentService implements StudentDao {
@@ -19,9 +20,8 @@ public class StudentService implements StudentDao {
         this.connection = connection;
     }
 
-    @Override
-    public List<StudentInterface> getAllStudents() {
-        ResultSet result = connection.executeQuery("SELECT * FROM Students");
+    public List<StudentInterface> getAllStudentsWhere(String requirement) {
+        ResultSet result = connection.executeQuery("SELECT * FROM students WHERE " + requirement);
         List<StudentInterface> studentList = new ArrayList<>();
         try{
             while(result.next()){
@@ -38,8 +38,15 @@ public class StudentService implements StudentDao {
     }
 
     @Override
+    public List<StudentInterface> getAllStudents() {
+        return getAllStudentsWhere("true");
+    }
+
+    @Override
     public StudentInterface getStudentByEmail(String studentEmail) {
-        return null;
+
+        return getAllStudentsWhere(" email = " + studentEmail).get(0);
+        
     }
 
     @Override
