@@ -23,7 +23,6 @@ public class JdbcConfigurator {
 
     private static void createStudentTable() {
         File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory("students.create-table.sql");
-
     }
 
     private static void useDatabase() {
