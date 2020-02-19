@@ -45,13 +45,14 @@ public class StudentService implements StudentDao {
     @Override
     public StudentInterface getStudentByEmail(String studentEmail) {
 
-        return getAllStudentsWhere(" email = " + studentEmail).get(0);
-        
+        return getAllStudentsWhere("`email` = " + studentEmail).get(0);
+
     }
 
     @Override
     public Boolean validateStudent(String studentEmail, String password) {
-        return null;
+
+        return !getAllStudentsWhere("`email` = '" + studentEmail + "' AND `password` = '" + password+ "'").isEmpty();
     }
 
     @Override
