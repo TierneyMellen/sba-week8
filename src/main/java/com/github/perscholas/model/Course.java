@@ -41,4 +41,9 @@ public class Course implements CourseInterface{
     public void setInstructor(String instructor) {
         this.instructor = instructor;
     }
+
+    @Override
+    public String toString(){
+        return this.id + " - " + this.name + " taught by " + this.instructor;
+    }
 }

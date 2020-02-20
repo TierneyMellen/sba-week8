@@ -21,7 +21,7 @@ public class StudentService implements StudentDao {
     }
 
     public List<StudentInterface> getAllStudentsWhere(String requirement) {
-        ResultSet result = connection.executeQuery("SELECT * FROM students WHERE " + requirement);
+        ResultSet result = connection.executeQuery("SELECT * FROM students WHERE " + requirement + ";");
         List<StudentInterface> studentList = new ArrayList<>();
         try{
             while(result.next()){
@@ -45,23 +45,36 @@ public class StudentService implements StudentDao {
     @Override
     public StudentInterface getStudentByEmail(String studentEmail) {
 
-        return getAllStudentsWhere("`email` = " + studentEmail).get(0);
+        return getAllStudentsWhere("`email` = '" + studentEmail + "'").get(0);
 
     }
 
     @Override
     public Boolean validateStudent(String studentEmail, String password) {
 
-        return !getAllStudentsWhere("`email` = '" + studentEmail + "' AND `password` = '" + password+ "'").isEmpty();
+        return getStudentByEmail(studentEmail).getPassword().equals(password);
     }
 
     @Override
     public void registerStudentToCourse(String studentEmail, int courseId) {
-
+        String thingWeWantToAdd = "insert into registration (id, email) values (" + courseId + ", '" + studentEmail + "');";
+        DatabaseConnection.MANAGEMENTSYSTEM.executeStatement(thingWeWantToAdd);
     }
 
     @Override
     public List<CourseInterface> getStudentCourses(String studentEmail) {
-        return null;
+        CourseService courseService= new CourseService(DatabaseConnection.MANAGEMENTSYSTEM);
+        ResultSet result = connection.executeQuery("SELECT * FROM registration WHERE `email` = '" + studentEmail + "';");
+        List<CourseInterface> courseList = new ArrayList<>();
+        try{
+            while(result.next()){
+                Integer id = result.getInt("id");
+                CourseInterface course = courseService.getCourseById(id);
+                courseList.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseList;
     }
 }

@@ -2,50 +2,41 @@ package com.github.perscholas;
 
 import com.github.perscholas.utils.DirectoryReference;
 import com.github.perscholas.utils.FileReader;
-import com.mysql.cj.jdbc.Driver;
+import org.mariadb.jdbc.Driver;
 
-// import javax.xml.crypto.Data;
 import java.io.File;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class JdbcConfigurator {
-    public static void initialize() {
-        registerJdbcDriver();
-        DatabaseConnection dbc = DatabaseConnection.MARIADB;
-        dbc.executeStatement("CREATE DATABASE IF NOT EXISTS managementSystem;");
-        dbc.executeStatement("USE managementSystem;");
-
-        createTable("courses.create-table.sql");
-        createTable("students.create-table.sql");
-        createTable("registration.create-table.sql");
-
-        populateTable("students.populate-table.sql");
-        populateTable("courses.populate-table.sql");
-    }
-
-    private static void registerJdbcDriver() {
-        // Attempt to register JDBC Driver
+    static {
         try {
+            // TODO - Attempt to register JDBC Driver
             DriverManager.registerDriver(Driver.class.newInstance());
-        } catch (InstantiationException | IllegalAccessException | SQLException e1) {
-            throw new Error(e1);
+        } catch (Exception e) {
+            throw new Error(e);
         }
     }
-    private static void createTable(String fileName) {
-        File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory(fileName);
-        FileReader fileReader = new FileReader(creationStatementFile.getAbsolutePath());
-        DatabaseConnection.MARIADB.executeStatement(fileReader.toString());
+
+    private static final DatabaseConnection dbc = DatabaseConnection.MANAGEMENTSYSTEM;
+
+    public static void initialize() {
+        dbc.drop();
+        dbc.create();
+        dbc.use();
+        executeSqlFile("courses.create-table.sql");
+        executeSqlFile("courses.populate-table.sql");
+        executeSqlFile("students.create-table.sql");
+        executeSqlFile("students.populate-table.sql");
+        executeSqlFile("registration.create-table.sql");
     }
 
-    private static void populateTable(String fileName) {
+    private static void executeSqlFile(String fileName) {
         File creationStatementFile = DirectoryReference.RESOURCE_DIRECTORY.getFileFromDirectory(fileName);
         FileReader fileReader = new FileReader(creationStatementFile.getAbsolutePath());
-        String fileContent = fileReader.toString();
-        String[] statements = fileContent.split(";");
+        String[] statements = fileReader.toString().split(";");
         for (int i = 0; i < statements.length; i++) {
             String statement = statements[i];
-            DatabaseConnection.MARIADB.executeStatement(statement);
+            dbc.executeStatement(statement);
         }
     }
 }

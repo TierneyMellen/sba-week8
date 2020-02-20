@@ -19,9 +19,8 @@ public class CourseService implements CourseDao {
         this.connection = connection;
     }
 
-    @Override
-    public List<CourseInterface> getAllCourses() {
-        ResultSet result = connection.executeQuery("SELECT * FROM Courses");
+    public List<CourseInterface> getAllCoursesWhere(String request) {
+        ResultSet result = connection.executeQuery("SELECT * FROM Courses WHERE " + request + ";");
         List<CourseInterface> courseList = new ArrayList<>();
         try{
             while(result.next()){
@@ -34,6 +33,16 @@ public class CourseService implements CourseDao {
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return null;
+        return courseList;
+    }
+
+
+    @Override
+    public List<CourseInterface> getAllCourses() {
+        return getAllCoursesWhere("true");
+    }
+
+    public CourseInterface getCourseById(Integer id){
+        return getAllCoursesWhere("`id` = '" + id + "'").get(0);
     }
 }

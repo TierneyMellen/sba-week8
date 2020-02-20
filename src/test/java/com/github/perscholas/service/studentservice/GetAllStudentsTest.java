@@ -35,7 +35,7 @@ public class GetAllStudentsTest {
     // TODO - Add `@Test` annotation
     public void test() {
         JdbcConfigurator.initialize();
-        StudentDao service = new StudentService(DatabaseConnection.MARIADB);
+        StudentDao service = new StudentService(DatabaseConnection.MANAGEMENTSYSTEM);
 
         // when
         List<StudentInterface> studentList = service.getAllStudents();
